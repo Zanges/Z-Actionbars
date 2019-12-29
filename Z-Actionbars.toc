@@ -1,0 +1,13 @@
+## Interface: 80205
+## Author: Zanges
+## Version: 1.0
+## Title: Z-Actionbars
+## Notes:
+## SavedVariables: Z-Actionbars_DB
+## SavedVariablesPerCharacter: Z-Actionbars_Character_DB
+## Dep: Ace3
+
+
+Libraries\Load_Libraries.xml
+Locales\Load_Locales.xml
+Main.lua
