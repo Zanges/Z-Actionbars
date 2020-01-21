@@ -1,11 +1,13 @@
+--- @class ActionBars
 local ActionBars = ZActionbars:NewModule("ActionBars")
 local AddonName, AddonTable = ...
+
+local LibWindow = LibStub("LibWindow-1.1")
 
 local Media = LibStub:GetLibrary("Z-Lib_Media-1.0")
 
 
 local ButtonID = 0
---local BarID = 1
 ---@type table
 local Bars = {}
 
@@ -24,6 +26,8 @@ function ActionBars:OnEnable()
             end
         end
     end
+
+    LibStub("LibActionButton-1.0").RegisterCallback(ActionBars ,"OnButtonContentsChanged")
 end
 
 function ActionBars:OnDisable()
@@ -32,6 +36,8 @@ function ActionBars:OnDisable()
             v:Hide()
         end
     end
+
+    LibStub("LibActionButton-1.0"):UnregisterAllCallbacks(ZActionbars)
 end
 
 --- Updates the Buttons for the Bar
@@ -111,8 +117,8 @@ function ActionBars:UpdateButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, 
             Button:SetPoint("TOPLEFT", Bar, "TOPLEFT", xOff, yOff)
             Button:SetSize(ButtonWidth, ButtonHeight)
             Button:Show()
-            Button:SetState(1, "action", 1)
-            Button:SetState(2, "action", 2)
+
+            Button:SetState(0, "action", Button.ID)
         end
     end
 end
@@ -141,10 +147,10 @@ function ActionBars:UpdateBars()
         local Settings = ZActionbars.db.profile.actionBars["bar"..i]
 
         Bar:ClearAllPoints()
-        Bar:SetPoint(Settings.AnchorPoint, UIParent, Settings.XOffset, Settings.YOffset)
-        Bar:SetSize(Settings.BarWidth, Settings.BarHeight)
+        Bar:SetPoint(Settings.AnchorPoint, UIParent, Settings.AnchorPoint, Settings.BarX, Settings.BarY)
+        Bar:SetSize(Settings.BarWidth, Settings.BarHeight)  -- TODO improve Scaling
 
-        Bar:SetBackdrop(Media.CommonStyle.Simple)   --TODO Style
+        --TODO Style
         Bar:SetBackdropBorderColor(Media:Grayscale(0.4))
         Bar:SetBackdropColor(Media:Grayscale(0.15))
 
@@ -152,4 +158,11 @@ function ActionBars:UpdateBars()
 
         ActionBars:UpdateButtons(Bar)
     end
+end
+
+function ActionBars:OnButtonContentsChanged(Button, State, Type, Value)
+    LibStub("Z-Lib_Debug-1.0"):Debug(Button)
+    LibStub("Z-Lib_Debug-1.0"):DebugTableRecursiveFormatted(State)
+    LibStub("Z-Lib_Debug-1.0"):Debug(Type)
+    LibStub("Z-Lib_Debug-1.0"):Debug(Value)
 end
