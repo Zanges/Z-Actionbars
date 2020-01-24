@@ -17,4 +17,5 @@ Options.lua
 
 DisableBlizzard.lua
 ActionBars.lua
+PetActionBar.lua
 MicroMenu.lua

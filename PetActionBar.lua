@@ -1,78 +1,52 @@
---- @class ActionBars
-local Module = ZActionbars:NewModule("ActionBars")
+local Module = ZActionbars:NewModule("PetActionBar")        -- TODO FIX
 local AddonName, AddonTable = ...
 
 local Media = LibStub:GetLibrary("Z-Lib_Media-1.0")
 
 
 local ButtonID = 0
----@type table
-local Bars = {}
+
+local Bar
 
 
 function Module:OnInitialize()
-    Module:SetEnabledState(ZActionbars.db.profile.moduleToggles.actionBars)
+    Module:SetEnabledState(ZActionbars.db.profile.moduleToggles.petActionBar)
 end
 
 function Module:OnEnable()
-    Module:UpdateBars()
-
-    if Bars then
-        for k, v in pairs(Bars) do
-            if v then
-                v:Show()
-            end
-        end
-    end
-
-    --LibStub("LibActionButton-1.0").RegisterCallback(Module,"OnButtonContentsChanged")
+    Module:UpdatePetBar()
 end
 
 function Module:OnDisable()
-    for k, v in pairs(Bars) do
-        if v then
-            v:Hide()
-        end
+    if Bar then
+        Bar:Hide()
     end
-
-    --LibStub("LibActionButton-1.0"):UnregisterAllCallbacks(ZActionbars)
 end
 
-function Module:UpdateBars()
-    for i = 1, ZActionbars.db.profile.actionBars.numActionBars do
-        ---@type Frame
-        local Bar
-        if not Bars[i] then
-            Bar = CreateFrame("Frame", AddonName .. "_Bar" .. i)
-            Bar:SetBackdrop(Media.CommonStyle.Simple)
+function Module:UpdatePetBar()
+    if Bar then
+        Bar:Show()
+    else
+        --- @type Frame
+        Bar = CreateFrame("Frame", AddonName .. "_PetActionBar")
+        Bar:SetBackdrop(Media.CommonStyle.Simple)
 
-            local Header = CreateFrame("Frame", AddonName .. "_Bar" .. i .. "_Header", Bar, "SecureHandlerStateTemplate")
-            RegisterStateDriver(Header, "page", "[mod:alt]2;1")
-            Header:SetAttribute("_onstate-page", [[
-                self:SetAttribute("state", newstate)
-                control:ChildUpdate("state", newstate)
-            ]])
-            Bar.Header = Header
-
-            Bars[i] = Bar
-        else
-            Bar = Bars[i]
-        end
-
-        local Settings = ZActionbars.db.profile.actionBars["bar"..i]
-
-        Bar:ClearAllPoints()
-        Bar:SetPoint(Settings.anchorPoint, Settings.barX, Settings.barY)
-        Bar:SetSize(Settings.barWidth, Settings.barHeight)  -- TODO improve Scaling
-
-        --TODO Style
         Bar:SetBackdropBorderColor(Media:Grayscale(0.4))
         Bar:SetBackdropColor(Media:Grayscale(0.15))
 
-        Bar.ButtonsX, Bar.ButtonsY, Bar.ButtonSpacingX, Bar.ButtonSpacingY, Bar.OuterMargin, Bar.ID = Settings.buttonsX, Settings.buttonsY, Settings.buttonSpacingX, Settings.buttonSpacingY, Settings.outerMargin, i
-
-        Module:UpdateButtons(Bar)
+        local Header = CreateFrame("Frame", AddonName .. "_PetBar_Header", Bar, "SecureHandlerStateTemplate")
+        Bar.Header = Header
     end
+
+    local Settings = ZActionbars.db.profile.petBar
+
+    Bar:ClearAllPoints()
+    Bar:SetPoint(Settings.anchorPoint, Settings.barX, Settings.barY)
+    Bar:SetSize(Settings.barWidth, Settings.barHeight)  -- TODO improve Scaling
+
+    Bar.ButtonsX, Bar.ButtonsY, Bar.ButtonSpacingX, Bar.ButtonSpacingY, Bar.OuterMargin = Settings.buttonsX, Settings.buttonsY, Settings.buttonSpacingX, Settings.buttonSpacingY, Settings.outerMargin
+
+    Module:UpdatePetButtons(Bar)
 end
 
 --- Updates the Buttons for the Bar
@@ -84,8 +58,12 @@ end
 --- @param ButtonSpacingX number @ New Spacing between the Buttons on the Y Axis (nil to keep)
 --- @param ButtonSpacingY number @ New Spacing between the Buttons on the Y Axis (nil to keep)
 --- @param OuterMargin number @ New Outer Margin between the Bar and Buttons (nil to keep)
-function Module:UpdateButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, ButtonSpacingX, ButtonSpacingY, OuterMargin)
+function Module:UpdatePetButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, ButtonSpacingX, ButtonSpacingY, OuterMargin)
     assert(Bar == not nil or type(Bar) == "table", "Bar must be a Frame")
+
+    if ButtonID > 10 then
+        return
+    end
 
 
     if BarWidth then
@@ -129,15 +107,15 @@ function Module:UpdateButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, Butt
             if Bar.Buttons[x][y] then
                 Button = Bar.Buttons[x][y]
             else
-                Button = LibStub("LibActionButton-1.0"):CreateButton(ButtonID, "Z-Actionbars_Bar".. Bar.ID .. "_Button_X" .. x .. "_Y" .. y, Bar.Header)
-                Button.ID = ButtonID
+                Button = LibStub("LibActionButton-1.0"):CreateButton("Pet" .. ButtonID, "Z-Actionbars_PetBar" .. "_Button_X" .. x .. "_Y" .. y, Bar.Header)
+                Button.ID = "Pet" .. ButtonID
                 ButtonID = ButtonID + 1
 
                 Button:SetParent(Bar)
 
                 local MSQ = LibStub("Masque", true)
                 if MSQ then
-                    Button:AddToMasque(MSQ:Group(AddonName, "Bar" .. Bar.ID))
+                    Button:AddToMasque(MSQ:Group(AddonName, "PetBar"))
                 end
 
                 Bar.Buttons[x][y] = Button
@@ -153,14 +131,9 @@ function Module:UpdateButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, Butt
             Button:SetSize(ButtonWidth, ButtonHeight)
             Button:Show()
 
-            Button:SetState(0, "action", Button.ID)
+            Button:SetAttribute("type", "pet")
+            Button:SetAttribute("action", ButtonID)
+            --Button:SetState(0, "pet", ButtonID)
         end
     end
-end
-
-function Module:OnButtonContentsChanged(Button, State, Type, Value)
-    LibStub("Z-Lib_Debug-1.0"):Debug(Button)
-    LibStub("Z-Lib_Debug-1.0"):DebugTableRecursiveFormatted(State)
-    LibStub("Z-Lib_Debug-1.0"):Debug(Type)
-    LibStub("Z-Lib_Debug-1.0"):Debug(Value)
 end

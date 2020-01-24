@@ -1,9 +1,10 @@
 local AddonName, AddonTable = ...
-local Options = ZActionbars:NewModule("Options", "AceConsole-3.0")
+local Module = ZActionbars:NewModule("Options", "AceConsole-3.0")
 
 
+local AceHelper = LibStub("Z-Lib_AceHelper-1.0")
 --- @type ActionBars
-local ActionBarsModule
+local ActionBarsModule, MicroMenuModule
 
 
 local options = {
@@ -22,7 +23,7 @@ local options = {
                     type = "toggle",
                     set = function(info, input)
                         ZActionbars.db.profile.moduleToggles.disableBlizzard = input
-                        LibStub("Z-Lib_AceHelper-1.0"):ToggleModule(ZActionbars, "DisableBlizzard", input)
+                        AceHelper:ToggleModule(ZActionbars, "DisableBlizzard", input)
                     end,
                     get = function(info)
                         return ZActionbars.db.profile.moduleToggles.disableBlizzard
@@ -34,10 +35,34 @@ local options = {
                     type = "toggle",
                     set = function(info, input)
                         ZActionbars.db.profile.moduleToggles.actionBars = input
-                        LibStub("Z-Lib_AceHelper-1.0"):ToggleModule(ZActionbars, "ActionBars", input)
+                        AceHelper:ToggleModule(ZActionbars, "ActionBars", input)
                     end,
                     get = function(info)
                         return ZActionbars.db.profile.moduleToggles.actionBars
+                    end,
+                },
+                petActionBar = {
+                    name = "Pet Actionbar",
+                    order = 3,
+                    type = "toggle",
+                    set = function(info, input)
+                        ZActionbars.db.profile.moduleToggles.petActionBar = input
+                        AceHelper:ToggleModule(ZActionbars, "PetActionBar", input)
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.moduleToggles.petActionBar
+                    end,
+                },
+                microMenu = {
+                    name = "Micro Menu",
+                    order = 4,
+                    type = "toggle",
+                    set = function(info, input)
+                        ZActionbars.db.profile.moduleToggles.microMenu = input
+                        AceHelper:ToggleModule(ZActionbars, "MicroMenu", input)
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.moduleToggles.microMenu
                     end,
                 },
             },
@@ -120,8 +145,8 @@ local options = {
                                     name = "Bar X Position",
                                     order = 3,
                                     type = "range",
-                                    min = -1 * (GetScreenWidth() / 1),
-                                    max = (GetScreenWidth() / 1),
+                                    min = -1 * floor(GetScreenWidth()),
+                                    max = floor(GetScreenWidth()),
                                     step = 1,
                                     set = function(info, input)
                                         ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarX = input
@@ -134,8 +159,8 @@ local options = {
                                 barY = {
                                     name = "Bar Y Position",
                                     order = 4,
-                                    min = -1 * (GetScreenHeight() / 1),
-                                    max = (GetScreenHeight() / 1),
+                                    min = -1 * floor(GetScreenHeight()),
+                                    max = floor(GetScreenHeight()),
                                     step = 1,
                                     type = "range",
                                     set = function(info, input)
@@ -151,7 +176,7 @@ local options = {
                                     order = 5,
                                     type = "range",
                                     min = 0,
-                                    max = (GetScreenWidth() / 1),
+                                    max = floor(GetScreenWidth()),
                                     step = 1,
                                     set = function(info, input)
                                         ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarWidth = input
@@ -165,7 +190,7 @@ local options = {
                                     name = "Bar Height",
                                     order = 6,
                                     min = 0,
-                                    max = (GetScreenHeight() / 1),
+                                    max = floor(GetScreenHeight()),
                                     step = 1,
                                     type = "range",
                                     set = function(info, input)
@@ -212,55 +237,245 @@ local options = {
                 },
             },
         },
+        microMenu = {
+            name = "Micro Menu",
+            order = 6,
+            disabled = function() return not ZActionbars.db.profile.moduleToggles.microMenu end,
+            hidden = function() return not ZActionbars.db.profile.moduleToggles.microMenu end,
+            type = "group",
+            args = {
+                orientation = {
+                    name = "Orientation",
+                    order = 1,
+                    type = "select",
+                    values = {
+                        ["HORIZONTAL"] = "HORIZONTAL",
+                        ["VERTICAL"] = "VERTICAL",
+                    },
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.orientation = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.orientation
+                    end,
+                },
+                anchorPoint = {
+                    name = "Anchor Point",
+                    order = 2,
+                    type = "select",
+                    values = {
+                        ["CENTER"] = "CENTER",
+                        ["TOPLEFT"] = "TOPLEFT",
+                        ["TOP"] = "TOP",
+                        ["TOPRIGHT"] = "TOPRIGHT",
+                        ["LEFT"] = "LEFT",
+                        ["RIGHT"] = "RIGHT",
+                        ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                        ["BOTTOM"] = "BOTTOM",
+                        ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                    },
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.anchorPoint = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.anchorPoint
+                    end,
+                },
+                xPosition = {
+                    name = "X Position",
+                    order = 3,
+                    type = "range",
+                    min = -1 * floor(GetScreenWidth()),
+                    max = floor(GetScreenWidth()),
+                    step = 1,
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.xPosition = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.xPosition
+                    end,
+                },
+                yPosition = {
+                    name = "Y Position",
+                    order = 4,
+                    min = -1 * floor(GetScreenHeight()),
+                    max = floor(GetScreenHeight()),
+                    step = 1,
+                    type = "range",
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.yPosition = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.yPosition
+                    end,
+                },
+                width = {
+                    name = "Bar Width",
+                    order = 5,
+                    type = "range",
+                    min = 0,
+                    max = floor(GetScreenWidth()),
+                    step = 1,
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.width = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.width
+                    end,
+                },
+                height = {
+                    name = "Bar Height",
+                    order = 6,
+                    min = 0,
+                    max = floor(GetScreenHeight()),
+                    step = 1,
+                    type = "range",
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.height = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.height
+                    end,
+                },
+                buttonSpacing = {
+                    name = "Button Spacing",
+                    order = 7,
+                    type = "range",
+                    min = 0,
+                    max = floor(GetScreenWidth()),
+                    step = 1,
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.buttonSpacing = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.buttonSpacing
+                    end,
+                },
+                outerMargin = {
+                    name = "Outer Margin",
+                    order = 8,
+                    min = 0,
+                    max = floor(GetScreenHeight()),
+                    step = 1,
+                    type = "range",
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.outerMargin = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.outerMargin
+                    end,
+                },
+                font = {
+                    name = "Button Font",
+                    order = 9,
+                    type = 'select',
+                    dialogControl = 'LSM30_Font',
+                    values = AceGUIWidgetLSMlists.font,
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.font = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.font
+                    end,
+                },
+                fontSize = {
+                    name = "Button Font Size",
+                    order = 10,
+                    min = 1,
+                    max = 32,
+                    step = 1,
+                    type = "range",
+                    set = function(info, input)
+                        ZActionbars.db.profile.microMenu.fontSize = input
+                        MicroMenuModule:UpdateMenuBar()
+                    end,
+                    get = function(info)
+                        return ZActionbars.db.profile.microMenu.fontSize
+                    end,
+                },
+            },
+        },
     },
 }
 
 local defaults = {
     profile = {
         moduleToggles = {
-            ['**'] = {
-                enabled = true,
-            },
+            ['**'] = true,
+            petActionBar = false, -- TODO FIX and re-enable
         },
         actionBars = {
             numActionBars = 2,
             selectedBar = 1,
             bar1 = {
-                AnchorPoint = "CENTER",
-                BarX = 0,
-                BarY = -160,
-                BarWidth = 320,
-                BarHeight = 90,
-                ButtonsX = 8,
-                ButtonsY = 2,
-                ButtonSpacingX = 0,
-                ButtonSpacingY = 0,
-                OuterMargin = 2,
+                anchorPoint = "CENTER",
+                barX = 0,
+                barY = -160,
+                barWidth = 320,
+                barHeight = 90,
+                buttonsX = 8,
+                buttonsY = 2,
+                buttonSpacingX = 0,
+                buttonSpacingY = 0,
+                outerMargin = 2,
             },
             bar2 = {
-                AnchorPoint = "BOTTOM",
-                BarX = 0,
-                BarY = 0,
-                BarWidth = 266,
-                BarHeight = 28,
-                ButtonsX = 16,
-                ButtonsY = 1,
-                ButtonSpacingX = 0,
-                ButtonSpacingY = 0,
-                OuterMargin = 1,
+                anchorPoint = "BOTTOM",
+                barX = 0,
+                barY = 0,
+                barWidth = 300,
+                barHeight = 32,
+                buttonsX = 18,
+                buttonsY = 1,
+                buttonSpacingX = 0,
+                buttonSpacingY = 0,
+                outerMargin = 2,
             },
             ['*'] = {
-                AnchorPoint = "CENTER",
-                BarX = 0,
-                BarY = 0,
-                BarWidth = 40,
-                BarHeight = 40,
-                ButtonsX = 1,
-                ButtonsY = 1,
-                ButtonSpacingX = 0,
-                ButtonSpacingY = 0,
-                OuterMargin = 2,
+                anchorPoint = "CENTER",
+                barX = 0,
+                barY = 0,
+                barWidth = 40,
+                barHeight = 40,
+                buttonsX = 1,
+                buttonsY = 1,
+                buttonSpacingX = 0,
+                buttonSpacingY = 0,
+                outerMargin = 2,
             },
+        },
+        microMenu = {
+            orientation = "VERTICAL",
+            anchorPoint = "BOTTOMRIGHT",
+            xPosition = 0,
+            yPosition = 0,
+            width = 80,
+            height = 180,
+            buttonSpacing = 1,
+            outerMargin = 2,
+            font = "Friz Quadrata TT",
+            fontSize = 7,
+        },
+        petBar = {
+            anchorPoint = "CENTER",
+            barX = -200,
+            barY = -260,
+            barWidth = 120,
+            barHeight = 24,
+            buttonsX = 10,
+            buttonsY = 1,
+            buttonSpacingX = 0,
+            buttonSpacingY = 0,
+            outerMargin = 2,
         },
     },
     char = {
@@ -275,19 +490,20 @@ local defaults = {
 }
 
 
-function Options:OnInitialize()
+function Module:OnInitialize()
     ZActionbars.db = LibStub("AceDB-3.0"):New("ZActionbars_DB", defaults, true)
 
     options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(ZActionbars.db)
     LibStub("AceConfig-3.0"):RegisterOptionsTable("Z-Actionbars", options, nil)
-    Options:RegisterChatCommand("ZAB", "OpenStandaloneConfig")
+    Module:RegisterChatCommand("ZAB", "OpenStandaloneConfig")
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Z-Actionbars")
 end
 
-function Options:OnEnable()
+function Module:OnEnable()
     ActionBarsModule = ZActionbars:GetModule("ActionBars")
+    MicroMenuModule= ZActionbars:GetModule("MicroMenu")
 end
 
-function Options:OpenStandaloneConfig()
+function Module:OpenStandaloneConfig()
     LibStub("AceConfigDialog-3.0"):Open("Z-Actionbars")
 end

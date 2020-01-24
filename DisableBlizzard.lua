@@ -1,26 +1,22 @@
-local DisableBlizzard = ZActionbars:NewModule("DisableBlizzard")
+local Module = ZActionbars:NewModule("DisableBlizzard")
 
 
---local MainMenuBar = _G["MainMenuBar"]
---local TimerTracker = _G["TimerTracker"]
---local MultiBarLeft = _G["MultiBarLeft"]
-
-DisableBlizzard.FramesToDisable = {MainMenuBarArtFrame, StatusTrackingBarManager, PetActionBarFrame, MicroButtonAndBagsBar}--, MainMenuBar, TimerTracker}
+Module.FramesToDisable = { MainMenuBarArtFrame, StatusTrackingBarManager, PetActionBarFrame, MicroButtonAndBagsBar}--, MainMenuBar, TimerTracker}
 
 
-function DisableBlizzard:OnInitialize()
-    DisableBlizzard:SetEnabledState(ZActionbars.db.profile.moduleToggles.disableBlizzard)
+function Module:OnInitialize()
+    Module:SetEnabledState(ZActionbars.db.profile.moduleToggles.disableBlizzard)
 end
 
-function DisableBlizzard:OnEnable() -- /run ZActionbars:GetModule("DisableBlizzard"):OnEnable()
-    for k, v in pairs(DisableBlizzard.FramesToDisable) do
+function Module:OnEnable() -- /run ZActionbars:GetModule("DisableBlizzard"):OnEnable()
+    for k, v in pairs(Module.FramesToDisable) do
         v:SetScript("OnEvent", nil)
         v:Hide()
     end
 end
 
-function DisableBlizzard:OnDisable()
-    for k, v in pairs(DisableBlizzard.FramesToDisable) do
+function Module:OnDisable()
+    for k, v in pairs(Module.FramesToDisable) do
         v:Show()
     end
 end
