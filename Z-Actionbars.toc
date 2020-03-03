@@ -3,7 +3,7 @@
 ## Version: 1.0
 ## Title: Z-Actionbars
 ## Notes:
-## SavedVariables: ZActionbars_DB
+## SavedVariables: Z-Actionbars_DB
 ## SavedVariablesPerCharacter: Z-Actionbars_Character_DB
 ## Dep: Z-Lib
 ## OptionalDeps: Masque
@@ -16,6 +16,7 @@ Main.lua
 Options.lua
 
 DisableBlizzard.lua
+
 ActionBars.lua
 PetActionBar.lua
 MicroMenu.lua

@@ -1,8 +1,9 @@
-local AddonName, AddonTable = ...
 local Module = ZActionbars:NewModule("Options", "AceConsole-3.0")
 
 
 local AceHelper = LibStub("Z-Lib_AceHelper-1.0")
+
+
 --- @type ActionBars
 local ActionBarsModule, MicroMenuModule
 
@@ -134,11 +135,11 @@ local options = {
                                         ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
                                     },
                                     set = function(info, input)
-                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].AnchorPoint = input
+                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].anchorPoint = input
                                         ActionBarsModule:UpdateBars()
                                     end,
                                     get = function(info)
-                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].AnchorPoint
+                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].anchorPoint
                                     end,
                                 },
                                 barX = {
@@ -149,11 +150,11 @@ local options = {
                                     max = floor(GetScreenWidth()),
                                     step = 1,
                                     set = function(info, input)
-                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarX = input
+                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barX = input
                                         ActionBarsModule:UpdateBars()
                                     end,
                                     get = function(info)
-                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarX
+                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barX
                                     end,
                                 },
                                 barY = {
@@ -164,11 +165,11 @@ local options = {
                                     step = 1,
                                     type = "range",
                                     set = function(info, input)
-                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarY = input
+                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barY = input
                                         ActionBarsModule:UpdateBars()
                                     end,
                                     get = function(info)
-                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarY
+                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barY
                                     end,
                                 },
                                 barWidth = {
@@ -179,11 +180,11 @@ local options = {
                                     max = floor(GetScreenWidth()),
                                     step = 1,
                                     set = function(info, input)
-                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarWidth = input
+                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barWidth = input
                                         ActionBarsModule:UpdateBars()
                                     end,
                                     get = function(info)
-                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarWidth
+                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barWidth
                                     end,
                                 },
                                 barHeight = {
@@ -194,11 +195,11 @@ local options = {
                                     step = 1,
                                     type = "range",
                                     set = function(info, input)
-                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarHeight = input
+                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barHeight = input
                                         ActionBarsModule:UpdateBars()
                                     end,
                                     get = function(info)
-                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].BarHeight
+                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].barHeight
                                     end,
                                 },
                                 barButtonsX = {
@@ -209,11 +210,11 @@ local options = {
                                     max = 100,
                                     step = 1,
                                     set = function(info, input)
-                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].ButtonsX = input
+                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].buttonsX = input
                                         ActionBarsModule:UpdateBars()
                                     end,
                                     get = function(info)
-                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].ButtonsX
+                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].buttonsX
                                     end,
                                 },
                                 barButtonsY = {
@@ -224,11 +225,11 @@ local options = {
                                     step = 1,
                                     type = "range",
                                     set = function(info, input)
-                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].ButtonsY = input
+                                        ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].buttonsY = input
                                         ActionBarsModule:UpdateBars()
                                     end,
                                     get = function(info)
-                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].ButtonsY
+                                        return ZActionbars.db.profile.actionBars["bar" .. ZActionbars.db.profile.actionBars.selectedBar].buttonsY
                                     end,
                                 },
                             },
@@ -491,7 +492,7 @@ local defaults = {
 
 
 function Module:OnInitialize()
-    ZActionbars.db = LibStub("AceDB-3.0"):New("ZActionbars_DB", defaults, true)
+    ZActionbars.db = LibStub("AceDB-3.0"):New("Z-Actionbars_DB", defaults, true)
 
     options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(ZActionbars.db)
     LibStub("AceConfig-3.0"):RegisterOptionsTable("Z-Actionbars", options, nil)

@@ -24,8 +24,6 @@ function Module:OnEnable()
             end
         end
     end
-
-    --LibStub("LibActionButton-1.0").RegisterCallback(Module,"OnButtonContentsChanged")
 end
 
 function Module:OnDisable()
@@ -34,8 +32,6 @@ function Module:OnDisable()
             v:Hide()
         end
     end
-
-    --LibStub("LibActionButton-1.0"):UnregisterAllCallbacks(ZActionbars)
 end
 
 function Module:UpdateBars()
@@ -44,6 +40,7 @@ function Module:UpdateBars()
         local Bar
         if not Bars[i] then
             Bar = CreateFrame("Frame", AddonName .. "_Bar" .. i)
+
             Bar:SetBackdrop(Media.CommonStyle.Simple)
 
             local Header = CreateFrame("Frame", AddonName .. "_Bar" .. i .. "_Header", Bar, "SecureHandlerStateTemplate")
@@ -156,11 +153,4 @@ function Module:UpdateButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, Butt
             Button:SetState(0, "action", Button.ID)
         end
     end
-end
-
-function Module:OnButtonContentsChanged(Button, State, Type, Value)
-    LibStub("Z-Lib_Debug-1.0"):Debug(Button)
-    LibStub("Z-Lib_Debug-1.0"):DebugTableRecursiveFormatted(State)
-    LibStub("Z-Lib_Debug-1.0"):Debug(Type)
-    LibStub("Z-Lib_Debug-1.0"):Debug(Value)
 end
