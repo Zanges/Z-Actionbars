@@ -14,6 +14,9 @@ function Module:OnEnable()
         v:Hide()
         v:ClearAllPoints()
     end
+    hooksecurefunc(MainMenuBar, 'Show', function()
+        MainMenuBar:Hide()
+    end)
 end
 
 function Module:OnDisable()
