@@ -4,6 +4,8 @@ local AddonName, AddonTable = ...
 
 local Media = LibStub:GetLibrary("Z-Lib_Media-1.0")
 
+local MSQ = LibStub("Masque", true)
+
 
 local ButtonID = 0
 ---@type table
@@ -132,11 +134,6 @@ function Module:UpdateButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, Butt
 
                 Button:SetParent(Bar)
 
-                local MSQ = LibStub("Masque", true)
-                if MSQ then
-                    Button:AddToMasque(MSQ:Group(AddonName, "Bar" .. Bar.ID))
-                end
-
                 Bar.Buttons[x][y] = Button
             end
 
@@ -151,6 +148,13 @@ function Module:UpdateButtons(Bar, BarWidth, BarHeight, ButtonsX, ButtonsY, Butt
             Button:Show()
 
             Button:SetState(0, "action", Button.ID)
+                
+            -- Handle Masque integration
+            if MSQ then
+                Group = MSQ:Group(AddonName, "Bar" .. Bar.ID)
+                Button:AddToMasque(Group)
+                Group:ReSkin()
+            end
         end
     end
 end
